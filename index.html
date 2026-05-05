@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrganMatch AI | Intelligent Donor Matching System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: bgScroll 20s linear infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes bgScroll {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .app-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .glass-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 20px 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo-area h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-area p {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .accuracy-badge {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            padding: 12px 24px;
+            border-radius: 60px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(16,185,129,0.3);
+        }
+
+        .accuracy-badge .label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.9);
+            letter-spacing: 1px;
+        }
+
+        .accuracy-badge .value {
+            font-size: 28px;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: none;
+            padding: 12px 28px;
+            border-radius: 60px;
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-tab i {
+            font-size: 18px;
+        }
+
+        .nav-tab:hover {
+            background: rgba(255,255,255,0.35);
+            transform: translateY(-2px);
+        }
+
+        .nav-tab.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 28px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, white 0%, #f8fafc 100%);
+            border-radius: 24px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .stat-icon {
+            font-size: 36px;
+            margin-bottom: 16px;
+        }
+
+        .stat-value {
+            font-size: 42px;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .two-columns {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control, select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-control:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 60px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102,126,234,0.4);
+        }
+
+        .btn-request {
+            background: linear-gradient(135deg, #10b981, #059669);
+            margin-top: 12px;
+            padding: 10px 20px;
+            font-size: 13px;
+            width: auto;
+        }
+
+        .match-item {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+
+        .match-item:hover {
+            transform: translateX(8px);
+            border-color: #667eea;
+            box-shadow: 0 8px 20px rgba(102,126,234,0.15);
+        }
+
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .match-rank {
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        .rank-1 { color: #f59e0b; }
+        .rank-2 { color: #94a3b8; }
+        .rank-3 { color: #cd7f32; }
+
+        .match-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .match-score {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #10b981, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .match-details {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .match-details i {
+            margin-right: 6px;
+            color: #667eea;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #34d399);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        .model-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .model-table th {
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 700;
+            color: #6b7280;
+            background: #f8fafc;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .model-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+        }
+
+        .model-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-blood {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #dc2626;
+        }
+
+        .badge-organ {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            color: #2563eb;
+        }
+
+        .badge-pending {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #d97706;
+        }
+
+        .organ-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding: 8px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .organ-item:hover {
+            background: #f8fafc;
+            transform: translateX(5px);
+        }
+
+        .organ-name {
+            width: 90px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .organ-bar-container {
+            flex: 1;
+            height: 36px;
+            background: #f1f5f9;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .organ-bar {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding-left: 15px;
+            font-size: 13px;
+            font-weight: 700;
+            color: white;
+            border-radius: 12px;
+            transition: width 0.5s ease;
+        }
+
+        .organ-count {
+            width: 50px;
+            font-weight: 700;
+            color: #1f2937;
+            text-align: right;
+        }
+
+        .blood-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .blood-card {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .blood-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .blood-type {
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .blood-count {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 6px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 28px;
+            padding: 28px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 15px;
+        }
+
+        .modal-header h3 {
+            color: #1f2937;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .close-modal:hover {
+            color: #ef4444;
+        }
+
+        .request-item {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 60px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #e5e7eb;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .glass-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 16px;
+            }
+            .two-columns {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .app-container {
+                padding: 12px;
+            }
+            .nav-tab {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <div class="app-container">
+        <div class="glass-header">
+            <div class="logo-area">
+                <h1><i class="fas fa-heartbeat"></i> OrganMatch AI</h1>
+                <p>Intelligent Donor Matching System | Machine Learning Powered</p>
+            </div>
+            <div class="accuracy-badge">
+                <div class="label">MATCHING ACCURACY</div>
+                <div class="value">90.2%</div>
+            </div>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('dashboard')">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </button>
+            <button class="nav-tab" onclick="switchTab('match')">
+                <i class="fas fa-search"></i> Find Match
+            </button>
+            <button class="nav-tab" onclick="switchTab('donors')">
+                <i class="fas fa-users"></i> Donor Registry
+            </button>
+            <button class="nav-tab" onclick="switchTab('models')">
+                <i class="fas fa-brain"></i> ML Models
+            </button>
+            <button class="nav-tab" onclick="switchTab('requests')">
+                <i class="fas fa-clipboard-list"></i> My Requests
+            </button>
+        </div>
+
+        <div id="content"></div>
+    </div>
+
+    <!-- Request Modal -->
+    <div id="requestModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-phone-alt"></i> Request Donor Contact</h3>
+                <button class="close-modal" onclick="closeModal()">✕</button>
+            </div>
+            
+            <input type="hidden" id="modalDonorId">
+            <input type="hidden" id="modalDonorNameHidden">
+            <input type="hidden" id="modalDonorBlood">
+            <input type="hidden" id="modalDonorOrgan">
+            
+            <div style="background: #f0f9ff; padding: 15px; border-radius: 16px; margin-bottom: 20px;">
+                <strong>Donor:</strong> <span id="modalDonorName"></span>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">👤 Recipient Full Name *</label>
+                <input type="text" id="modalRecipientName" class="form-control" placeholder="Enter patient name">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">📅 Recipient Age</label>
+                <input type="text" id="modalRecipientAge" class="form-control" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">📍 City</label>
+                <input type="text" id="modalRecipientCity" class="form-control" readonly>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">🏥 Hospital Name</label>
+                <input type="text" id="modalHospital" class="form-control" value="City General Hospital">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">👨‍⚕️ Attending Doctor</label>
+                <input type="text" id="modalDoctor" class="form-control" value="Dr. Sharma">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">📞 Contact Phone</label>
+                <input type="tel" id="modalPhone" class="form-control" placeholder="+91 XXXXXXXXXX">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">📧 Contact Email</label>
+                <input type="email" id="modalEmail" class="form-control" placeholder="hospital@email.com">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">⚠️ Urgency Level</label>
+                <select id="modalUrgency" class="form-control">
+                    <option value="1">1 - Low</option>
+                    <option value="2">2 - Moderate</option>
+                    <option value="3" selected>3 - High</option>
+                    <option value="4">4 - Critical</option>
+                    <option value="5">5 - Emergency</option>
+                </select>
+            </div>
+            
+            <button class="btn-primary" onclick="submitDonorRequest()">📤 Send Request to Hospital</button>
+            <p style="font-size: 11px; color: #6b7280; margin-top: 12px; text-align: center;">
+                Hospital transplant coordinator will contact you within 24 hours
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const API = 'http://127.0.0.1:5000/api';
+        let currentMatches = [];
+        
+        function createParticles() {
+            for(let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.width = Math.random() * 5 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particle.style.animationDuration = Math.random() * 8 + 4 + 's';
+                document.querySelector('.bg-animation').appendChild(particle);
+            }
+        }
+        createParticles();
+
+        async function apiGet(endpoint) {
+            try {
+                const res = await fetch(API + endpoint);
+                return await res.json();
+            } catch(e) {
+                console.error(e);
+                return null;
+            }
+        }
+
+        async function apiPost(endpoint, data) {
+            try {
+                const res = await fetch(API + endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                return await res.json();
+            } catch(e) {
+                console.error(e);
+                return null;
+            }
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            event.target.closest('.nav-tab').classList.add('active');
+            
+            if(tab === 'dashboard') renderDashboard();
+            else if(tab === 'match') renderMatch();
+            else if(tab === 'donors') renderDonors();
+            else if(tab === 'models') renderModels();
+            else if(tab === 'requests') renderRequests();
+        }
+
+        async function renderDashboard() {
+            document.getElementById('content').innerHTML = `
+                <div style="text-align: center; padding: 60px;">
+                    <div class="spinner" style="margin: 0 auto;"></div>
+                    <p style="margin-top: 20px; color: white;">Loading healthcare data...</p>
+                </div>
+            `;
+            
+            const stats = await apiGet('/stats');
+            if(!stats) {
+                document.getElementById('content').innerHTML = '<div class="card" style="color: red;">⚠️ Backend not running. Start Flask on port 5000</div>';
+                return;
+            }
+            
+            const organColors = {
+                Kidney: '#3b82f6', Liver: '#f97316', Heart: '#ef4444',
+                Lung: '#10b981', Cornea: '#8b5cf6', Pancreas: '#14b8a6'
+            };
+            const maxOrgan = Math.max(...Object.values(stats.organ_distribution));
+            
+            const organBars = Object.entries(stats.organ_distribution).map(([o, c]) => `
+                <div class="organ-item">
+                    <div class="organ-name">${o}</div>
+                    <div class="organ-bar-container">
+                        <div class="organ-bar" style="width: ${(c/maxOrgan)*100}%; background: ${organColors[o]}">${c}</div>
+                    </div>
+                    <div class="organ-count">${c}</div>
+                </div>
+            `).join('');
+            
+            const bloodGroups = Object.entries(stats.blood_distribution).map(([g, c]) => `
+                <div class="blood-card">
+                    <div class="blood-type">${g}</div>
+                    <div class="blood-count">${c} donors</div>
+                </div>
+            `).join('');
+            
+            document.getElementById('content').innerHTML = `
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">🫀</div>
+                        <div class="stat-value">${stats.total_donors}</div>
+                        <div class="stat-label">Registered Donors</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏥</div>
+                        <div class="stat-value">${stats.total_recipients}</div>
+                        <div class="stat-label">Waiting Recipients</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-value">90.2%</div>
+                        <div class="stat-label">Model Accuracy</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⚡</div>
+                        <div class="stat-value">4</div>
+                        <div class="stat-label">ML Models Deployed</div>
+                    </div>
+                </div>
+                <div class="two-columns">
+                    <div class="card">
+                        <h3 style="margin-bottom: 20px;"><i class="fas fa-chart-pie"></i> Organ Distribution</h3>
+                        ${organBars}
+                    </div>
+                    <div class="card">
+                        <h3 style="margin-bottom: 20px;"><i class="fas fa-tint"></i> Blood Group Distribution</h3>
+                        <div class="blood-grid">${bloodGroups}</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 style="margin-bottom: 16px;"><i class="fas fa-info-circle"></i> System Overview</h3>
+                    <p style="color: #4b5563; line-height: 1.7;">
+                        OrganMatch AI uses <strong>K-Nearest Neighbors (KNN)</strong> algorithm with <strong>8 medical parameters</strong> 
+                        to match donors and recipients. The system achieves <strong>90.2% matching accuracy</strong>.
+                    </p>
+                </div>
+            `;
+        }
+
+        function renderMatch() {
+            document.getElementById('content').innerHTML = `
+                <div class="card">
+                    <h2 style="margin-bottom: 24px;"><i class="fas fa-stethoscope"></i> Recipient Medical Profile</h2>
+                    
+                    <div style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border-radius: 20px; padding: 16px; margin-bottom: 24px; border-left: 4px solid #667eea;">
+                        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                            <i class="fas fa-brain" style="font-size: 24px; color: #667eea;"></i>
+                            <div>
+                                <strong style="color: #1f2937;">🔍 Matching Algorithm: K-Nearest Neighbors (KNN)</strong>
+                                <p style="color: #4b5563; font-size: 13px; margin-top: 4px;">Using 8 medical parameters | 90.2% accuracy | k=9, Manhattan distance</p>
+                            </div>
+                            <span style="background: #10b981; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-left: auto;">ACTIVE</span>
+                        </div>
+                    </div>
+                    
+                    <div class="two-columns" style="gap: 20px;">
+                        <div>
+                            <div class="form-group">
+                                <label class="form-label">🫀 Organ Required</label>
+                                <select id="organ" class="form-control">
+                                    <option>Kidney</option><option>Liver</option><option>Heart</option>
+                                    <option>Lung</option><option>Cornea</option><option>Pancreas</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">🩸 Blood Group</label>
+                                <select id="blood" class="form-control">
+                                    <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+                                    <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">📅 Age (Years)</label>
+                                <input type="number" id="age" value="45" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">🧬 HLA Score (0-1)</label>
+                                <input type="number" id="hla" step="0.01" value="0.70" class="form-control">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group">
+                                <label class="form-label">📍 City</label>
+                                <select id="city" class="form-control">
+                                    <option>Mumbai</option><option>Delhi</option><option>Bengaluru</option>
+                                    <option>Chennai</option><option>Hyderabad</option><option>Kolkata</option>
+                                    <option>Pune</option><option>Ahmedabad</option><option>Jaipur</option><option>Lucknow</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">⚠️ Urgency Level (1-5)</label>
+                                <input type="number" id="urgency" value="3" class="form-control" min="1" max="5">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">⏰ Wait Time (Days)</label>
+                                <input type="number" id="wait" value="120" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">📊 Medical Score (0-1)</label>
+                                <input type="number" id="med" step="0.01" value="0.75" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-primary" onclick="findMatches()">
+                        <i class="fas fa-heartbeat"></i> Find Compatible Donors (KNN Model)
+                    </button>
+                </div>
+                <div id="matchResults"></div>
+            `;
+        }
+
+        async function findMatches() {
+            const resultsDiv = document.getElementById('matchResults');
+            resultsDiv.innerHTML = '<div class="loading"><div class="spinner"></div> KNN Model searching 600+ donors...</div>';
+            
+            const recipient = {
+                organ_type: document.getElementById('organ').value,
+                blood_group: document.getElementById('blood').value,
+                age: parseInt(document.getElementById('age').value),
+                hla_score: parseFloat(document.getElementById('hla').value),
+                city: document.getElementById('city').value,
+                urgency_level: parseInt(document.getElementById('urgency').value),
+                wait_time_days: parseInt(document.getElementById('wait').value),
+                medical_score: parseFloat(document.getElementById('med').value),
+                weight_kg: 65
+            };
+            
+            const startTime = performance.now();
+            const data = await apiPost('/find-donors', recipient);
+            const endTime = performance.now();
+            const responseTime = (endTime - startTime).toFixed(0);
+            
+            if(!data || !data.matches || data.matches.length === 0) {
+                resultsDiv.innerHTML = '<div class="card" style="margin-top: 20px; text-align: center;">No compatible donors found. Try adjusting criteria.</div>';
+                return;
+            }
+            
+            currentMatches = data.matches;
+            
+            const matchesHtml = data.matches.map((m, idx) => {
+                const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx+1}`;
+                const rankClass = idx === 0 ? 'rank-1' : idx === 1 ? 'rank-2' : idx === 2 ? 'rank-3' : '';
+                return `
+                    <div class="match-item">
+                        <div class="match-header">
+                            <div>
+                                <span class="match-rank ${rankClass}">${medal}</span>
+                                <span class="match-name"> ${m.name}</span>
+                            </div>
+                            <div class="match-score">${m.compatibility_score}%</div>
+                        </div>
+                        <div class="match-details">
+                            <span><i class="fas fa-tint"></i> ${m.blood_group}</span>
+                            <span><i class="fas fa-birthday-cake"></i> ${m.age} years</span>
+                            <span><i class="fas fa-map-marker-alt"></i> ${m.city}</span>
+                            <span><i class="fas fa-dna"></i> HLA: ${m.hla_score}</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${m.compatibility_score}%"></div>
+                        </div>
+                        <button class="btn-primary btn-request" onclick='openRequestModal(${JSON.stringify(m).replace(/'/g, "&#39;")})'>
+                            <i class="fas fa-phone-alt"></i> Request This Donor
+                        </button>
+                    </div>
+                `;
+            }).join('');
+            
+            resultsDiv.innerHTML = `
+                <div class="card" style="margin-top: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 16px;">
+                        <h3><i class="fas fa-trophy"></i> Top ${data.matches.length} Compatible Donors</h3>
+                        <div style="background: #f0fdf4; padding: 6px 12px; border-radius: 20px;">
+                            <i class="fas fa-clock"></i> KNN responded in ${responseTime}ms
+                        </div>
+                    </div>
+                    <p style="color: #6b7280; margin-bottom: 20px;">
+                        <i class="fas fa-chart-line"></i> KNN Model (k=9, Manhattan distance) | 90.2% accuracy | Searched ${data.total_searched} donors
+                    </p>
+                    ${matchesHtml}
+                </div>
+            `;
+        }
+
+        function openRequestModal(donor) {
+            const modal = document.getElementById('requestModal');
+            document.getElementById('modalDonorName').innerHTML = `${donor.name} (${donor.blood_group})`;
+            document.getElementById('modalDonorId').value = donor.donor_id;
+            document.getElementById('modalDonorNameHidden').value = donor.name;
+            document.getElementById('modalDonorBlood').value = donor.blood_group;
+            document.getElementById('modalDonorOrgan').value = document.getElementById('organ').value;
+            document.getElementById('modalRecipientAge').value = document.getElementById('age').value;
+            document.getElementById('modalRecipientCity').value = document.getElementById('city').value;
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('requestModal').style.display = 'none';
+        }
+
+        async function submitDonorRequest() {
+            const recipientName = document.getElementById('modalRecipientName').value;
+            if(!recipientName) {
+                alert('❌ Please enter recipient name');
+                return;
+            }
+            
+            const requestData = {
+                donor_id: document.getElementById('modalDonorId').value,
+                donor_name: document.getElementById('modalDonorNameHidden').value,
+                donor_blood: document.getElementById('modalDonorBlood').value,
+                donor_organ: document.getElementById('modalDonorOrgan').value,
+                recipient_name: recipientName,
+                recipient_age: document.getElementById('modalRecipientAge').value,
+                recipient_city: document.getElementById('modalRecipientCity').value,
+                hospital: document.getElementById('modalHospital').value,
+                doctor_name: document.getElementById('modalDoctor').value,
+                contact_phone: document.getElementById('modalPhone').value,
+                contact_email: document.getElementById('modalEmail').value,
+                urgency_level: document.getElementById('modalUrgency').value
+            };
+            
+            const result = await apiPost('/request-donor', requestData);
+            
+            if(result && result.success) {
+                alert(`✅ Request #${result.request_id} sent successfully!\n\nHospital coordinator will contact you within 24 hours.`);
+                closeModal();
+                document.getElementById('modalRecipientName').value = '';
+                document.getElementById('modalPhone').value = '';
+                document.getElementById('modalEmail').value = '';
+            } else {
+                alert('❌ Failed to send request. Please try again.');
+            }
+        }
+
+        async function renderDonors() {
+            document.getElementById('content').innerHTML = '<div class="loading"><div class="spinner"></div> Loading donor registry...</div>';
+            const data = await apiGet('/donors');
+            if(!data) return;
+            
+            const rows = data.donors.map(d => `
+                <tr style="border-bottom: 1px solid #e5e7eb;">
+                    <td style="padding: 12px;"><code>${d.id}</code></td>
+                    <td style="padding: 12px;"><strong>${d.name}</strong></td>
+                    <td style="padding: 12px;">${d.age}</td>
+                    <td style="padding: 12px;"><span class="badge badge-blood">${d.blood_group}</span></td>
+                    <td style="padding: 12px;"><span class="badge badge-organ">${d.organ_type}</span></td>
+                    <td style="padding: 12px;">${d.city}</td>
+                    <td style="padding: 12px;">${d.hla_score}</td>
+                </tr>
+            `).join('');
+            
+            document.getElementById('content').innerHTML = `
+                <div class="card">
+                    <h2 style="margin-bottom: 20px;"><i class="fas fa-users"></i> Donor Registry</h2>
+                    <p style="color: #6b7280; margin-bottom: 20px;">Showing ${data.donors.length} of ${data.total} registered donors</p>
+                    <div class="table-wrapper">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #f8fafc; border-bottom: 2px solid #e5e7eb;">
+                                    <th style="padding: 12px; text-align: left;">ID</th>
+                                    <th style="padding: 12px; text-align: left;">Name</th>
+                                    <th style="padding: 12px; text-align: left;">Age</th>
+                                    <th style="padding: 12px; text-align: left;">Blood</th>
+                                    <th style="padding: 12px; text-align: left;">Organ</th>
+                                    <th style="padding: 12px; text-align: left;">City</th>
+                                    <th style="padding: 12px; text-align: left;">HLA</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rows}</tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function renderModels() {
+            document.getElementById('content').innerHTML = '<div class="loading"><div class="spinner"></div> Loading ML models...</div>';
+            const models = await apiGet('/model-comparison');
+            if(!models) return;
+            
+            let tableRows = '';
+            let count = 0;
+            
+            for (const [name, m] of Object.entries(models)) {
+                tableRows += `
+                    <tr style="border-bottom: 1px solid #e5e7eb;">
+                        <td style="padding: 14px 16px; font-weight: 600;">${name} ${count === 0 ? '⭐' : ''}</td>
+                        <td style="padding: 14px 16px; color: #10b981; font-weight: 700;">${(m.accuracy * 100).toFixed(1)}%</td>
+                        <td style="padding: 14px 16px;">${(m.precision * 100).toFixed(1)}%</td>
+                        <td style="padding: 14px 16px;">${(m.recall * 100).toFixed(1)}%</td>
+                        <td style="padding: 14px 16px;">${(m.f1 * 100).toFixed(1)}%</td>
+                        <td style="padding: 14px 16px;">${(m.auc_roc * 100).toFixed(1)}%</td>
+                    </tr>
+                `;
+                count++;
+            }
+            
+            document.getElementById('content').innerHTML = `
+                <div class="card">
+                    <h2 style="margin-bottom: 20px;"><i class="fas fa-brain"></i> Model Performance Metrics</h2>
+                    <p style="color: #6b7280; margin-bottom: 20px;">4 models trained on 50,000+ match samples | 80/20 train-test split</p>
+                    
+                    <div class="table-wrapper">
+                        <table class="model-table">
+                            <thead>
+                                <tr>
+                                    <th>Model</th>
+                                    <th>Accuracy</th>
+                                    <th>Precision</th>
+                                    <th>Recall</th>
+                                    <th>F1 Score</th>
+                                    <th>AUC-ROC</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${tableRows}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card" style="margin-top: 24px;">
+                    <h3><i class="fas fa-chart-line"></i> Why KNN is Ideal for Organ Matching</h3>
+                    <p style="color: #4b5563; line-height: 1.7; margin-top: 16px;">
+                        <strong>K-Nearest Neighbors (KNN)</strong> is the primary matching algorithm because organ donation is fundamentally a 
+                        <strong>similarity-based problem</strong>. GridSearchCV optimized the model with <strong>k=9</strong> and 
+                        <strong>Manhattan distance</strong> metric, achieving <strong>90.2% matching accuracy</strong>.
+                    </p>
+                </div>
+            `;
+        }
+
+        async function renderRequests() {
+            document.getElementById('content').innerHTML = `
+                <div class="card">
+                    <h2 style="margin-bottom: 20px;"><i class="fas fa-clipboard-list"></i> My Donor Requests</h2>
+                    <p style="color: #6b7280; margin-bottom: 20px;">Track your donor request status</p>
+                    <div class="form-group">
+                        <label class="form-label">Enter your name to view requests</label>
+                        <input type="text" id="searchRecipientName" class="form-control" placeholder="Enter the name you used for request">
+                    </div>
+                    <button class="btn-primary" onclick="loadMyRequests()">
+                        <i class="fas fa-search"></i> View My Requests
+                    </button>
+                </div>
+                <div id="requestsList"></div>
+            `;
+        }
+
+        async function loadMyRequests() {
+            const recipientName = document.getElementById('searchRecipientName').value;
+            if(!recipientName) {
+                alert('Please enter your name');
+                return;
+            }
+            
+            const requestsDiv = document.getElementById('requestsList');
+            requestsDiv.innerHTML = '<div class="loading"><div class="spinner"></div> Loading your requests...</div>';
+            
+            const result = await apiGet(`/my-requests?recipient_name=${encodeURIComponent(recipientName)}`);
+            
+            if(result && result.requests.length > 0) {
+                const requestsHtml = result.requests.map(req => `
+                    <div class="request-item">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                            <strong>Request #${req.request_id}</strong>
+                            <span class="badge badge-pending">${req.status.toUpperCase()}</span>
+                        </div>
+                        <div style="font-size: 13px; margin-top: 12px;">
+                            <div>🎯 Donor: ${req.donor_name} (${req.donor_blood})</div>
+                            <div>🫀 Organ: ${req.donor_organ}</div>
+                            <div>🏥 Hospital: ${req.hospital}</div>
+                            <div>👨‍⚕️ Doctor: ${req.doctor_name}</div>
+                            <div>📅 Requested: ${req.request_date}</div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                requestsDiv.innerHTML = `
+                    <div class="card" style="margin-top: 24px;">
+                        <h3><i class="fas fa-list"></i> Your Requests (${result.requests.length})</h3>
+                        ${requestsHtml}
+                        <div style="background: #f0f9ff; border-radius: 16px; padding: 15px; margin-top: 15px;">
+                            <strong>🏥 Need Help?</strong>
+                            <p style="font-size: 12px; margin-top: 8px;">
+                                📞 Transplant Helpline: 1800-XXX-XXXX<br>
+                                📧 Email: transplant@organmatch.ai
+                            </p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                requestsDiv.innerHTML = '<div class="card" style="margin-top: 24px;">No requests found for this name</div>';
+            }
+        }
+
+        renderDashboard();
+    </script>
+</body>
+</html>
