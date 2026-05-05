@@ -63,30 +63,9 @@ Double-click frontend/index.html or open in browser
 4. Hospital coordinator is notified to contact donor
 5. Request status can be tracked in "My Requests" tab
 
-## Project Structure
-OrganMatch-AI/
-├── backend/
-│   ├── app.py           # Flask REST API server
-│   └── model.py         # ML model training script
-├── frontend/
-│   └── index.html       # Web interface
-├── data/
-│   ├── donors.csv       # Donor database
-│   ├── recipients.csv   # Recipient database
-│   └── generate_dataset.py
-├── models/
-│   ├── knn_model.pkl    # Trained KNN model
-│   └── scaler.pkl       # StandardScaler
-└── README.md
-
 ## Results and Achievements
 - Achieved 90.2% matching accuracy using KNN algorithm
 - Optimal hyperparameters found via GridSearchCV (k=9, Manhattan distance)
 - Real-time matching response time under 200 milliseconds
 - Successfully deployed as full-stack web application
 
-## Author
-OrganMatch AI - Machine Learning Healthcare Project
-
-## GitHub Repository
-[https://github.com/YOUR_USERNAME/OrganMatch-AI](https://github.com/YOUR_USERNAME/OrganMatch-AI)
