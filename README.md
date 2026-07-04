@@ -1,154 +1,138 @@
-OrganMatch-AI
-Machine Learning Powered Organ Donor Matching System
-📌 Overview
-OrganMatch-AI is an intelligent web-based system that leverages the K-Nearest Neighbors (KNN) algorithm to match organ donors with recipients. The system evaluates 5 critical medical parameters and delivers the top-10 most compatible donors in under 1 second with an accuracy of 90.2%.
+# OrganMatch-AI
+## AI-Powered Organ Donor Matching System | 90.2% Accuracy
 
-The Problem: Manual donor matching processes are slow, error-prone, and fail to meet the growing demand for organ transplants.
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-2.3.2-green.svg)](https://flask.palletsprojects.com/)
+[![Scikit-learn](https://img.shields.io/badge/Scikit--learn-1.3.0-orange.svg)](https://scikit-learn.org/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Made in India](https://img.shields.io/badge/Made%20in-India-blue.svg)](https://www.india.gov.in/)
 
-The Solution: OrganMatch-AI automates the matching process using Machine Learning, enabling faster, more accurate, and life-saving decisions.
+---
 
-🔬 How It Works
-Medical Parameters Analyzed
-Blood Type: A+, A-, B+, B-, AB+, AB-, O+, O-
+## Overview
 
-Organ Type: Kidney, Liver, Heart, Lung, Pancreas, Cornea
+OrganMatch-AI is an intelligent web application that uses Machine Learning to match organ donors with recipients in real-time.
 
-HLA Typing: Human Leukocyte Antigen matching
+The system analyzes 5 critical medical parameters including Blood Type, Organ Type, HLA Typing, BMI, and Rh Factor.
 
-BMI: Body Mass Index
+Using the K-Nearest Neighbors (KNN) algorithm, it delivers the top-10 most compatible donors in under 1 second.
 
-Rh Factor: Positive or Negative
+The model achieves 90.2% matching accuracy, significantly outperforming traditional manual matching methods.
 
-Algorithm Details
-Model: K-Nearest Neighbors (KNN)
+Why this matters: Every day, people die waiting for organ transplants - not because organs aren't available, but because the matching process is slow and manual.
 
-Optimized k-value: 7
+OrganMatch-AI solves this by automating the entire matching process, making it faster, more accurate, and potentially life-saving.
 
-Matching Accuracy: 90.2%
+---
 
-Response Time: < 1 second
+## How It Works
 
-Performance Metrics
-Accuracy: 90.2%
+Input Parameters:
 
-Precision: 0.88
+- Blood Type (A+, A-, B+, B-, AB+, AB-, O+, O-)
+- Organ Type (Kidney, Liver, Heart, Lung, Pancreas, Cornea)
+- HLA Typing
+- BMI
+- Rh Factor (Positive/Negative)
 
-Recall: 0.89
+Algorithm Details:
 
-F1-Score: 0.88
+- Model: K-Nearest Neighbors (KNN)
+- k-value: 7 (optimized)
+- Accuracy: 90.2%
+- Response Time: Less than 1 second
 
-🏗️ Technology Stack
-Layer	Technology
-Frontend	HTML5, CSS3, JavaScript (Poppins Font)
-Backend	Flask (Python)
-Machine Learning	Scikit-learn (KNN)
-Data Processing	Pandas, NumPy
-Model Persistence	Joblib
-API	RESTful API with Flask-CORS
-🏥 Hospital Workflow
-The system follows a streamlined hospital-to-hospital communication model:
+Performance Metrics:
 
-Patient Registration: Hospital admin enters patient medical details
+- Accuracy: 90.2%
+- Precision: 0.88
+- Recall: 0.89
+- F1-Score: 0.88
 
-Automated Matching: KNN algorithm finds top-10 compatible donors
+---
 
-Results Display: Donor information including hospital name and phone number is shown
+## Tech Stack
 
-Direct Contact: Hospital contacts the donor hospital directly
+Frontend: HTML5, CSS3, JavaScript
 
-Transplant Coordination: Donor hospital coordinates the transplant
+Backend: Flask (Python)
 
-Request Tracking: All requests are stored with status tracking
+Machine Learning: Scikit-learn (KNN)
 
-📁 Project Structure
-text
-OrganMatch-AI/
-│
-├── backend/
-│   ├── app.py              # Flask API server
-│   └── create_data.py      # Data generator
-│
-├── frontend/
-│   └── index.html          # Web interface
-│
-├── data/
-│   ├── donors.csv          # 1500+ donors
-│   └── recipients.csv      # 500+ recipients
-│
-└── models/
-    ├── knn_model.pkl       # Trained KNN model
-    └── scaler.pkl          # Feature scaler
-📊 Dataset Overview
-Category	Count
-Donors	1500+
-Recipients	500+
-Organs	6 (Kidney, Liver, Heart, Lung, Pancreas, Cornea)
-Blood Types	8
-Cities	10 (Indian cities)
-🚀 Quick Start Guide
-Prerequisites
-Python 3.8 or higher
+Data Processing: Pandas, NumPy
 
-pip package manager
+Model Persistence: Joblib
 
-Installation Steps
-bash
-# Step 1: Clone the repository
-git clone https://github.com/your-username/OrganMatch-AI.git
-cd OrganMatch-AI
+API: Flask-CORS
 
-# Step 2: Create virtual environment
-python -m venv venv
-venv\Scripts\activate  # For Windows
+---
 
-# Step 3: Install dependencies
-pip install -r requirements.txt
+## How to Use
 
-# Step 4: Generate donor data
-python backend/create_data.py
+Step 1: Enter patient details (Blood Type, Organ, Age, City, BMI, Rh Factor, HLA Typing)
 
-# Step 5: Train machine learning models
-python backend.py
+Step 2: Click "Find Compatible Donors"
 
-# Step 6: Start the Flask server
-python app.py
+Step 3: System shows top-10 matching donors with match scores
 
-# Step 7: Open the frontend
-start frontend/index.html
-📞 API Endpoints
-Endpoint	Method	Description
-/api/health	GET	Server health status
-/api/stats	GET	System statistics
-/api/find-donors	POST	Find compatible donors
-/api/request-donor	POST	Send donor request
-/api/my-requests	GET	View request history
-/api/donors	GET	List all donors
-🎯 Key Features
-Fast Matching: Results delivered in < 1 second
+Step 4: Donor hospital name and phone number is displayed
 
-High Accuracy: 90.2% matching accuracy
+Step 5: Click "Contact Donor Hospital" to send a request
 
-Hospital Communication: Direct hospital-to-hospital contact
+Step 6: View all your requests in the "My Requests" tab
 
-Contact Details: Donor hospital phone number displayed
+---
 
-Request Tracking: Complete history with status updates
+## Dataset
 
-Scientific Approach: KNN algorithm with 5 medical parameters
+- 1500+ Donors
+- 500+ Recipients
+- 6 Organs (Kidney, Liver, Heart, Lung, Pancreas, Cornea)
+- 8 Blood Types
+- 10 Indian Cities
 
-India Focused: Indian cities, hospitals, and names
+---
 
-🛠️ Libraries & Dependencies
-Library	Purpose
-Flask	Web framework
-Scikit-learn	Machine Learning (KNN)
-Pandas	Data processing
-NumPy	Numerical operations
-Joblib	Model persistence
-Flask-CORS	Cross-origin requests
-📈 Model Performance Comparison
-Model	Accuracy	Precision	Recall	F1-Score
-KNN	90.2%	0.88	0.89	0.88
-Random Forest	87.5%	0.85	0.86	0.855
-SVM	84.3%	0.82	0.81	0.815
-Decision Tree	81.2%	0.79	0.78	0.785
+## Key Features
+
+- Matching in less than 1 second
+- 90.2% matching accuracy
+- Direct donor hospital phone number
+- Complete request tracking
+- KNN algorithm with 5 medical parameters
+
+---
+
+## Model Comparison
+
+KNN: 90.2% Accuracy, 0.88 F1-Score
+
+Random Forest: 87.5% Accuracy, 0.855 F1-Score
+
+SVM: 84.3% Accuracy, 0.815 F1-Score
+
+Decision Tree: 81.2% Accuracy, 0.785 F1-Score
+
+---
+
+## Quick Start
+
+Step 1: pip install -r requirements.txt
+
+Step 2: python backend/create_data.py
+
+Step 3: python backend.py
+
+Step 4: python app.py
+
+Step 5: Open frontend/index.html in browser
+
+---
+
+## Contributor
+
+Shreya S Rai
+
+
+
+Made with Love for India
