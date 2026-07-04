@@ -1,104 +1,110 @@
+# backend/create_data.py
+# Creates 1000 donors with ALL organs and ALL blood types for data/donors.csv
+
 import pandas as pd
-import numpy as np
 import random
-from faker import Faker
+import os
 
-fake = Faker('en_IN')
-random.seed(42)
-np.random.seed(42)
+print("🔄 Creating 1000 donors with ALL organs and blood types...")
 
-BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
-ORGANS = ['Kidney', 'Liver', 'Heart', 'Lung', 'Cornea', 'Pancreas']
-CITIES = ['Mumbai', 'Delhi', 'Bengaluru', 'Chennai', 'Hyderabad',
-          'Kolkata', 'Pune', 'Ahmedabad', 'Jaipur', 'Lucknow']
+# ===== CREATE data/ folder if not exists =====
+os.makedirs('data', exist_ok=True)
 
-COMPATIBILITY = {
-    'A+':  ['A+', 'AB+'],
-    'A-':  ['A+', 'A-', 'AB+', 'AB-'],
-    'B+':  ['B+', 'AB+'],
-    'B-':  ['B+', 'B-', 'AB+', 'AB-'],
-    'AB+': ['AB+'],
-    'AB-': ['AB+', 'AB-'],
-    'O+':  ['A+', 'B+', 'AB+', 'O+'],
-    'O-':  ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
-}
+# ===== ALL BLOOD TYPES =====
+blood_types = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
 
-def blood_compatible(donor_bg, recipient_bg):
-    return 1 if recipient_bg in COMPATIBILITY.get(donor_bg, []) else 0
+# ===== ALL ORGANS =====
+organs = ['Kidney', 'Liver', 'Heart', 'Lung', 'Pancreas', 'Cornea']
 
-def generate_record(record_id, role):
-    return {
-        'id':             record_id,
-        'name':           fake.name(),
-        'age':            random.randint(18, 65),
-        'blood_group':    random.choice(BLOOD_GROUPS),
-        'organ_type':     random.choice(ORGANS),
-        'hla_score':      round(random.uniform(0.3, 1.0), 2),
-        'city':           random.choice(CITIES),
-        'urgency_level':  random.randint(1, 5),
-        'wait_time_days': random.randint(1, 730),
-        'weight_kg':      round(random.uniform(45, 100), 1),
-        'medical_score':  round(random.uniform(0.5, 1.0), 2),
-        'role':           role
-    }
+# ===== RH FACTORS =====
+rh_factors = ['Positive', 'Negative']
 
-donors     = [generate_record(f'D{i:04d}', 'donor')     for i in range(1, 601)]
-recipients = [generate_record(f'R{i:04d}', 'recipient') for i in range(1, 501)]
+# ===== HLA TYPES =====
+hla_list = [
+    'A1,B8,DR3', 'A2,B7,DR2', 'A3,B7,DR4', 'A1,B8,DR17',
+    'A2,B44,DR4', 'A3,B35,DR1', 'A24,B7,DR15', 'A1,B57,DR7',
+    'A2,B15,DR4', 'A3,B18,DR11', 'A11,B35,DR1', 'A24,B44,DR7'
+]
 
-df_donors     = pd.DataFrame(donors)
-df_recipients = pd.DataFrame(recipients)
+# ===== CITIES (Only 10 from your donor list) =====
+cities = [
+    'Bengaluru', 'Mumbai', 'Delhi', 'Chennai', 
+    'Hyderabad', 'Kolkata', 'Pune', 'Ahmedabad', 
+    'Jaipur', 'Lucknow'
+]
 
-matches = []
-for _, rec in df_recipients.iterrows():
-    compatible = df_donors[df_donors['organ_type'] == rec['organ_type']].copy()
-    for _, don in compatible.iterrows():
-        bc         = blood_compatible(don['blood_group'], rec['blood_group'])
-        hla_diff   = abs(don['hla_score'] - rec['hla_score'])
-        age_diff   = abs(don['age'] - rec['age'])
-        city_match = 1 if don['city'] == rec['city'] else 0
-        weight_diff= abs(don['weight_kg'] - rec['weight_kg'])
+# ===== INDIAN NAMES =====
+first_names = ['Aarav', 'Vivaan', 'Aditya', 'Arjun', 'Sai', 'Pranav',
+               'Dhruv', 'Krishna', 'Shaurya', 'Aadhya', 'Ananya', 'Diya',
+               'Ishita', 'Myra', 'Priya', 'Riya', 'Sara', 'Tanvi', 'Aanya']
+
+last_names = ['Sharma', 'Verma', 'Patel', 'Singh', 'Kumar', 'Reddy',
+              'Gupta', 'Joshi', 'Nair', 'Rao', 'Desai', 'Mehta', 'Khanna']
+
+# ===== HOSPITALS =====
+hospitals = [
+    'AIIMS Delhi', 'Apollo Hospitals', 'Fortis Hospital', 
+    'Manipal Hospital', 'Narayana Health', 'KIMS Hospital',
+    'Medanta Hospital', 'Sir Ganga Ram Hospital', 'Kokilaben Hospital'
+]
+
+def create_donors(count=1000):
+    """Create 1000 donors with ALL organs and ALL blood types"""
+    donors = []
+    
+    for i in range(1, count + 1):
+        first = random.choice(first_names)
+        last = random.choice(last_names)
         
-        # Raw compatibility score (0-100)
-        raw_score = (bc * 35 + (1 - hla_diff) * 25 +
-                     max(0, 1 - age_diff/50) * 15 + city_match * 10 +
-                     max(0, 1 - weight_diff/60) * 10 +
-                     rec['urgency_level'] / 5 * 5)
-        
-        # Add noise to make it realistic (target ~90% accuracy)
-        noisy_score = raw_score + np.random.normal(0, 8)
-        noisy_score = max(0, min(100, noisy_score))
-        
-        # Match label based on noisy score (threshold 55)
-        is_match = 1 if (bc == 1 and noisy_score >= 55) else 0
-        
-        matches.append({
-            'donor_id':            don['id'],
-            'recipient_id':        rec['id'],
-            'blood_compatible':    bc,
-            'hla_diff':            round(hla_diff, 3),
-            'age_diff':            age_diff,
-            'city_match':          city_match,
-            'weight_diff':         round(weight_diff, 1),
-            'urgency_level':       rec['urgency_level'],
-            'wait_time_days':      rec['wait_time_days'],
-            'medical_score':       rec['medical_score'],
-            'compatibility_score': round(noisy_score, 2),
-            'match_label':         is_match
-        })
+        donor = {
+            'id': f'D{i:04d}',                    # ✅ MATCHES app.py column name
+            'name': f'{first} {last}',            # ✅ MATCHES app.py column name
+            'blood_group': random.choice(blood_types),   # ✅ MATCHES app.py
+            'organ_type': random.choice(organs),          # ✅ MATCHES app.py
+            'hla_score': round(random.uniform(0.3, 1.0), 2),
+            'bmi': round(random.uniform(18.5, 35.0), 1),
+            'rh_factor': random.choice(rh_factors),
+            'age': random.randint(18, 65),
+            'gender': random.choice(['Male', 'Female']),
+            'city': random.choice(cities),
+            'hospital': random.choice(hospitals),
+            'contact': f'+91-{random.randint(7000000000, 9999999999)}',
+            'weight_kg': round(random.uniform(45, 100), 1),
+            'urgency_level': random.randint(1, 5),
+            'wait_time_days': random.randint(0, 730),
+            'medical_score': round(random.uniform(0.5, 1.0), 2)
+        }
+        donors.append(donor)
+    
+    return pd.DataFrame(donors)
 
-df_matches = pd.DataFrame(matches)
-pos  = df_matches[df_matches['match_label'] == 1]
-neg  = df_matches[df_matches['match_label'] == 0]
-neg  = neg.sample(min(len(pos)*2, len(neg)), random_state=42)
-df_balanced = pd.concat([pos, neg]).sample(frac=1, random_state=42).reset_index(drop=True)
+# ===== GENERATE 1000 DONORS =====
+df = create_donors(1000)
 
-df_donors.to_csv('data/donors.csv', index=False)
-df_recipients.to_csv('data/recipients.csv', index=False)
-df_balanced.to_csv('data/matches.csv', index=False)
+# ===== SAVE TO data/donors.csv (WHERE app.py READS FROM!) =====
+df.to_csv('data/donors.csv', index=False)
 
-accuracy = df_balanced['match_label'].mean() * 100
-print(f"✅ Donors:      {len(df_donors)}")
-print(f"✅ Recipients:  {len(df_recipients)}")
-print(f"✅ Match pairs: {len(df_balanced)}")
-print(f"✅ Match rate:  {accuracy:.1f}%")
-print("Dataset saved successfully!")
+print(f"✅ Created {len(df)} donors in data/donors.csv!")
+
+# ===== SHOW STATS =====
+print("\n" + "="*50)
+print("📊 ORGAN DISTRIBUTION")
+print("="*50)
+print(df['organ_type'].value_counts())
+
+print("\n" + "="*50)
+print("📊 BLOOD TYPE DISTRIBUTION")
+print("="*50)
+print(df['blood_group'].value_counts())
+
+print("\n" + "="*50)
+print("📊 CITY DISTRIBUTION")
+print("="*50)
+print(df['city'].value_counts())
+
+print("\n" + "="*50)
+print("📊 SAMPLE DONORS (First 10)")
+print("="*50)
+print(df[['id', 'name', 'blood_group', 'organ_type', 'city', 'hospital']].head(10))
+
+print("\n✅ ALL DONE! Now run: python app.py")
