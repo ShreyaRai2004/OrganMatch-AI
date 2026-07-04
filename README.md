@@ -4,7 +4,6 @@
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Flask-2.3.2-green.svg)](https://flask.palletsprojects.com/)
 [![Scikit-learn](https://img.shields.io/badge/Scikit--learn-1.3.0-orange.svg)](https://scikit-learn.org/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Made in India](https://img.shields.io/badge/Made%20in-India-blue.svg)](https://www.india.gov.in/)
 
 ---
@@ -135,4 +134,3 @@ Shreya S Rai
 
 
 
-Made with Love for India
